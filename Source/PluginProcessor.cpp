@@ -108,6 +108,7 @@ void HrtfbasedSpatialAudioAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool HrtfbasedSpatialAudioAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
+    // THIS IS A TEST
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
     return true;
