@@ -55,7 +55,14 @@ public:
     void getStateInformation (MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
 
+	void setAngleIndex(int index);
+
 private:
+	AudioSampleBuffer lBuff;
+	AudioSampleBuffer rBuff;
+	dsp::ProcessorChain<dsp::FIR::Filter<float>> leftFilter;
+	dsp::ProcessorChain<dsp::FIR::Filter<float>> rightFilter;
+
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HrtfbasedSpatialAudioAudioProcessor)
 };

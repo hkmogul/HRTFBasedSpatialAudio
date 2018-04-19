@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT name="HRTFBasedSpatialAudio" projectType="audioplug" buildStandalone="1"
-              jucerVersion="5.3.1">
+              jucerVersion="5.3.1" pluginFormats="buildStandalone,buildVST"
+              pluginVST3Category="Spatial" pluginVSTCategory="kPlugSurroundFx">
   <MAINGROUP id="nSyW51" name="HRTFBasedSpatialAudio">
     <GROUP id="{F58D7745-CEE4-5A5D-50AF-6213FA7E2E1B}" name="Source">
+      <FILE id="kjt5UN" name="leftIR.h" compile="0" resource="0" file="Source/leftIR.h"/>
+      <FILE id="uAhUlu" name="rightIR.h" compile="0" resource="0" file="Source/rightIR.h"/>
       <FILE id="eHRIYS" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="PM8Ful" name="PluginProcessor.h" compile="0" resource="0"
@@ -38,6 +41,7 @@
         <MODULEPATH id="juce_audio_processors" path="../../modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../modules"/>
+        <MODULEPATH id="juce_dsp" path="../../modules"/>
       </MODULEPATHS>
     </XCODE_MAC>
     <VS2017 targetFolder="Builds/VisualStudio2017">
@@ -61,6 +65,7 @@
         <MODULEPATH id="juce_audio_processors" path="../../modules"/>
         <MODULEPATH id="juce_audio_plugin_client" path="../../modules"/>
         <MODULEPATH id="juce_audio_utils" path="../../modules"/>
+        <MODULEPATH id="juce_dsp" path="../../modules"/>
       </MODULEPATHS>
     </VS2017>
   </EXPORTFORMATS>
@@ -75,6 +80,7 @@
     <MODULE id="juce_core" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_cryptography" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_data_structures" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
+    <MODULE id="juce_dsp" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_events" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_graphics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>
     <MODULE id="juce_gui_basics" showAllCode="1" useLocalCopy="0" useGlobalPath="0"/>

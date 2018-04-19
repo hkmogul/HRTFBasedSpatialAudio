@@ -16,7 +16,7 @@
 //==============================================================================
 /**
 */
-class HrtfbasedSpatialAudioAudioProcessorEditor  : public AudioProcessorEditor
+class HrtfbasedSpatialAudioAudioProcessorEditor  : public AudioProcessorEditor, Slider::Listener
 {
 public:
     HrtfbasedSpatialAudioAudioProcessorEditor (HrtfbasedSpatialAudioAudioProcessor&);
@@ -30,6 +30,9 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     HrtfbasedSpatialAudioAudioProcessor& processor;
-
+	Slider angleSlider;
+	Label angleLabel;
+	void sliderValueChanged(Slider* slider) override;
+	int angleIndex;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HrtfbasedSpatialAudioAudioProcessorEditor)
 };

@@ -10,6 +10,8 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include "leftIR.h"
+#include "rightIR.h"
 
 //==============================================================================
 HrtfbasedSpatialAudioAudioProcessor::HrtfbasedSpatialAudioAudioProcessor()
@@ -17,7 +19,7 @@ HrtfbasedSpatialAudioAudioProcessor::HrtfbasedSpatialAudioAudioProcessor()
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
-                       .withInput  ("Input",  AudioChannelSet::stereo(), true)
+                       .withInput  ("Input",  AudioChannelSet::mono(), true)
                       #endif
                        .withOutput ("Output", AudioChannelSet::stereo(), true)
                      #endif
@@ -97,6 +99,14 @@ void HrtfbasedSpatialAudioAudioProcessor::prepareToPlay (double sampleRate, int 
 {
     // Use this method as the place to do any pre-playback
     // initialisation that you need..
+	dsp::ProcessSpec spec;
+	spec.maximumBlockSize = samplesPerBlock;
+	spec.sampleRate = sampleRate;
+	spec.numChannels = 1;
+	leftFilter.prepare(spec);
+	rightFilter.prepare(spec);
+	lBuff = AudioSampleBuffer(1, samplesPerBlock);
+	rBuff = AudioSampleBuffer(1, samplesPerBlock);
 }
 
 void HrtfbasedSpatialAudioAudioProcessor::releaseResources()
@@ -108,7 +118,6 @@ void HrtfbasedSpatialAudioAudioProcessor::releaseResources()
 #ifndef JucePlugin_PreferredChannelConfigurations
 bool HrtfbasedSpatialAudioAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
-    // THIS IS A TEST
   #if JucePlugin_IsMidiEffect
     ignoreUnused (layouts);
     return true;
@@ -151,11 +160,27 @@ void HrtfbasedSpatialAudioAudioProcessor::processBlock (AudioBuffer<float>& buff
     // the samples and the outer loop is handling the channels.
     // Alternatively, you can process the samples with the channels
     // interleaved by keeping the same state.
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
+    for (int channel = 0; channel < totalNumOutputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
-
-        // ..do something to the data...
+		// assume L = 0 and R = 1?
+		if (channel == 0)
+		{
+		// there has to be a better way than this...	
+			lBuff.copyFrom(0, 0, buffer.getReadPointer(0), buffer.getNumSamples());
+			dsp::AudioBlock<float> lBufBlock(lBuff);
+			dsp::ProcessContextReplacing<float> lContext(lBufBlock);
+			leftFilter.process(lContext);
+			memcpy(channelData, lBufBlock.getChannelPointer(0), sizeof(float) * buffer.getNumSamples());
+		}
+		else
+		{
+			rBuff.copyFrom(0, 0, buffer.getReadPointer(0), buffer.getNumSamples());
+			dsp::AudioBlock<float> rBufBlock(rBuff);
+			dsp::ProcessContextReplacing<float> rContext(rBufBlock);
+			leftFilter.process(rContext);
+			memcpy(channelData, rBufBlock.getChannelPointer(0), sizeof(float) * buffer.getNumSamples());
+		}
     }
 }
 
@@ -189,4 +214,11 @@ void HrtfbasedSpatialAudioAudioProcessor::setStateInformation (const void* data,
 AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
     return new HrtfbasedSpatialAudioAudioProcessor();
+}
+
+void HrtfbasedSpatialAudioAudioProcessor::setAngleIndex(int index)
+{
+	*(leftFilter.getProcessor().coefficients) = dsp::FIR::Coefficients<float>(leftIR[index], L_IRLEN);
+	*(rightFilter.getProcessor().coefficients) = dsp::FIR::Coefficients<float>(rightIR[index], R_IRLEN);
+
 }
