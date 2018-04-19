@@ -105,8 +105,7 @@ void HrtfbasedSpatialAudioAudioProcessor::prepareToPlay (double sampleRate, int 
 	spec.numChannels = 1;
 	leftFilter.prepare(spec);
 	rightFilter.prepare(spec);
-	lBuff = AudioSampleBuffer(1, samplesPerBlock);
-	rBuff = AudioSampleBuffer(1, samplesPerBlock);
+	setAngleIndex(0);
 }
 
 void HrtfbasedSpatialAudioAudioProcessor::releaseResources()
