@@ -151,8 +151,10 @@ void HrtfbasedSpatialAudioAudioProcessor::processBlock (AudioBuffer<float>& buff
     // This is here to avoid people getting screaming feedback
     // when they first compile a plugin, but obviously you don't need to keep
     // this code if your algorithm always overwrites all the output channels.
-    for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
-        buffer.clear (i, 0, buffer.getNumSamples());
+	auto* inputData = buffer.getReadPointer(0);
+
+	for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
+		buffer.copyFrom(i, 0, inputData, buffer.getNumSamples());
 
     // This is the place where you'd normally do the guts of your plugin's
     // audio processing...
@@ -166,20 +168,15 @@ void HrtfbasedSpatialAudioAudioProcessor::processBlock (AudioBuffer<float>& buff
 		// assume L = 0 and R = 1?
 		if (channel == 0)
 		{
-		// there has to be a better way than this...	
-			lBuff.copyFrom(0, 0, buffer.getReadPointer(0), buffer.getNumSamples());
-			dsp::AudioBlock<float> lBufBlock(lBuff);
+			dsp::AudioBlock<float> lBufBlock = dsp::AudioBlock<float>(&channelData, 1, buffer.getNumSamples());
 			dsp::ProcessContextReplacing<float> lContext(lBufBlock);
 			leftFilter.process(lContext);
-			memcpy(channelData, lBufBlock.getChannelPointer(0), sizeof(float) * buffer.getNumSamples());
 		}
 		else
 		{
-			rBuff.copyFrom(0, 0, buffer.getReadPointer(0), buffer.getNumSamples());
-			dsp::AudioBlock<float> rBufBlock(rBuff);
+			dsp::AudioBlock<float> rBufBlock = dsp::AudioBlock<float>(&channelData, 1, buffer.getNumSamples());
 			dsp::ProcessContextReplacing<float> rContext(rBufBlock);
-			leftFilter.process(rContext);
-			memcpy(channelData, rBufBlock.getChannelPointer(0), sizeof(float) * buffer.getNumSamples());
+			rightFilter.process(rContext);
 		}
     }
 }

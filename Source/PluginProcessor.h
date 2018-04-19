@@ -58,8 +58,6 @@ public:
 	void setAngleIndex(int index);
 
 private:
-	AudioSampleBuffer lBuff;
-	AudioSampleBuffer rBuff;
 	dsp::ProcessorChain<dsp::FIR::Filter<float>> leftFilter;
 	dsp::ProcessorChain<dsp::FIR::Filter<float>> rightFilter;
 
