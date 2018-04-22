@@ -15,18 +15,20 @@
 HrtfbasedSpatialAudioAudioProcessorEditor::HrtfbasedSpatialAudioAudioProcessorEditor (HrtfbasedSpatialAudioAudioProcessor& p)
     : AudioProcessorEditor (&p), processor (p)
 {
-
-	
 	addAndMakeVisible(angleSlider);
-	angleSlider.setRange(0, 345, 15); // TODO: skew to make it so 0 is at 12 oclock
+	angleSlider.setRange(-345, 0, 15); // TODO: 
 	angleSlider.setSliderStyle(Slider::SliderStyle::Rotary);
+	angleSlider.setTextValueSuffix(" * -1 degrees");
+	Slider::RotaryParameters param;
+	param.startAngleRadians = 0;
+	param.endAngleRadians = 2 * 3.14159;
+	param.stopAtEnd = false;
+	angleSlider.setRotaryParameters(param);
 	angleSlider.addListener(this);
 	addAndMakeVisible(angleLabel);
 	angleLabel.attachToComponent(&angleSlider, true);
 	angleLabel.setText("Angle (degrees)", NotificationType::dontSendNotification);
 
-	// Make sure that before the constructor has finished, you've set the
-	// editor's size to whatever you need it to be.
 	setSize(400, 300);
 }
 
@@ -42,7 +44,6 @@ void HrtfbasedSpatialAudioAudioProcessorEditor::paint (Graphics& g)
 
     g.setColour (Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), Justification::centred, 1);
 }
 
 void HrtfbasedSpatialAudioAudioProcessorEditor::resized()
@@ -56,7 +57,7 @@ void HrtfbasedSpatialAudioAudioProcessorEditor::sliderValueChanged(Slider* slide
 {
 	if (slider == &angleSlider)
 	{
-		angleIndex = (int) angleSlider.getValue() / 15;
+		angleIndex = -1*(int) angleSlider.getValue() / 15;
 		// send notification to plugin processor to update filters
 		processor.setAngleIndex(angleIndex);
 	}
