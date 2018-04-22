@@ -32,6 +32,7 @@ private:
     HrtfbasedSpatialAudioAudioProcessor& processor;
 	Slider angleSlider;
 	Label angleLabel;
+	TextEditor textBox;
 	void sliderValueChanged(Slider* slider) override;
 	int angleIndex;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (HrtfbasedSpatialAudioAudioProcessorEditor)
